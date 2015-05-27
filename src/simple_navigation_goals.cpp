@@ -10,16 +10,16 @@ double w;
 
 void odomMsgs(const nav_msgs::Odometry& odometry)						//callback function for the position of the robot
 {
-	x = odom.pose.pose.position.x;
-	y = odom.pose.pose.position.y;
-	w = odom.twist.twist.linear.z;	
+	x = odometry.pose.pose.position.x;
+	y = odometry.pose.pose.position.y;
+	w = odometry.twist.twist.linear.z;	
 }
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 int main(int argc, char** argv){
   ros::init(argc, argv, "simple_navigation_goals");
-  
+  ros::NodeHandle nh;
   ros::Subscriber sub = nh.subscribe("odom", 1, &odomMsgs);					//subscribed to odometry msg
   
   //tell the action client that we want to spin a thread by default
@@ -51,6 +51,6 @@ int main(int argc, char** argv){
     ROS_INFO("The base failed to move forward 1 meter for some reason");
 
   
-  ROS::SpinOnce;
+  //ros::spinOnce();
   
 }
