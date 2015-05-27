@@ -6,6 +6,9 @@
 double x;
 double y;
 double w;
+double goal_x;
+double goal_y;
+double goal_w;
 
 
 void odomMsgs(const nav_msgs::Odometry& odometry)						//callback function for the position of the robot
@@ -30,27 +33,49 @@ int main(int argc, char** argv){
     ROS_INFO("Waiting for the move_base action server to come up");
   }
 
-  move_base_msgs::MoveBaseGoal goal;
+  while (true) {
 
-  //we'll send a goal to the robot to move 1 meter forward
-  goal.target_pose.header.frame_id = "base_link";
-  goal.target_pose.header.stamp = ros::Time::now();
+      //CALCULATIONS
 
-  goal.target_pose.pose.position.x = 1.0;
-  goal.target_pose.pose.position.y = 0.0;
-  goal.target_pose.pose.orientation.z = 1.0;
+      if (x<1,02){
+          goal_x = 1.52;
+          goal_y = 0,76;
+          goal_w = 0.5 * M_PI;
+      }
 
-  ROS_INFO("Sending goal");
-  ac.sendGoal(goal);
+      if ((x > 1,02) && (x < 1,12)){
+          goal_x = 3,02;
+          goal_y = 0,76;
+          goal_w = 0.5 * M_PI;
+      }
 
-  ac.waitForResult();
+      //END CALCULATIONS
 
-  if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-    ROS_INFO("Hoera, luc broeren is een kneus");
-  else
-    ROS_INFO("The base failed to move forward 1 meter for some reason");
 
-  
-  //ros::spinOnce();
-  
+
+
+
+      move_base_msgs::MoveBaseGoal goal;
+
+      //we'll send a goal to the robot to move 1 meter forward
+      goal.target_pose.header.frame_id = "base_link";
+      goal.target_pose.header.stamp = ros::Time::now();
+
+      goal.target_pose.pose.position.x = goal_x;
+      goal.target_pose.pose.position.y = goal_y;
+      goal.target_pose.pose.orientation.z = goal_w;
+
+      ROS_INFO("Sending goal");
+      ac.sendGoal(goal);
+
+      ac.waitForResult();
+
+      if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+        ROS_INFO("Hoera, luc broeren is een kneus");
+      else
+        ROS_INFO("The base failed to move forward 1 meter for some reason");
+
+
+      //ros::spinOnce();
+  }
 }
