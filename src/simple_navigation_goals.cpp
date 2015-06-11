@@ -10,6 +10,7 @@ double goal_x;
 double goal_y;
 double goal_w;
 
+int loops = 0;
 
 void odomMsgs(const move_base_msgs::MoveBaseActionFeedback& feedback)						//callback function for the position of the robot
 {
@@ -42,7 +43,7 @@ int main(int argc, char** argv){
   while (ros::ok()) {
 
       //CALCULATIONS
-
+	  /*
       if (x<0.5){
           goal_x = 1;
           goal_y = 0.0;
@@ -54,13 +55,20 @@ int main(int argc, char** argv){
           goal_y = 0.0;
           goal_w = 0.5 * 3.1415;
       }
-
+*/	
+			
+			goal_x = 1.5;
+			goal_y = 1;
+			goal_w = 0.5*3.1415;
+			loops++;
+			
+			
       //END CALCULATIONS
+		
 
 
 
-
-	  ROS_INFO("Fuck alles");
+	  ROS_INFO("Sending goal");
       move_base_msgs::MoveBaseGoal goal;
 
       //we'll send a goal to the robot to move 1 meter forward
@@ -70,6 +78,7 @@ int main(int argc, char** argv){
       goal.target_pose.pose.position.x = goal_x;
       goal.target_pose.pose.position.y = goal_y;
       goal.target_pose.pose.orientation.w = goal_w;
+      goal.target_pose.pose.orientation.z = goal_w;
 
       ROS_INFO("Sending goal");
       ac.sendGoal(goal);
