@@ -1,28 +1,16 @@
-
-
-
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include <move_base_msgs/MoveBaseActionFeedback.h>
 
-
-double pie = 3.14159265;
 double x;
 double y;
 double w;
-double curr_x;
-double curr_y;
-double curr_w;
 double goal_x;
 double goal_y;
 double goal_w;
-double set_bot_w;
-double set_bot_x;
-double set_top_w;
-double set_top_x;
-int count;
 
+int loops = 0;
 
 void odomMsgs(const move_base_msgs::MoveBaseActionFeedback& feedback)						//callback function for the position of the robot
 {
@@ -54,58 +42,33 @@ int main(int argc, char** argv){
 
   while (ros::ok()) {
 
+      //CALCULATIONS
+	  /*
+      if (x<0.5){
+          goal_x = 1;
+          goal_y = 0.0;
+          goal_w = 0.5 * 3.1415;
+      }
 
-while(true){
-
-	if (count == 0){
-		goal_x = curr_x;
-		goal_y = 13;
-		goal_w = curr_w;
+      if ((x > 0.5) && (x < 0.6)){
+          goal_x = 2.5;
+          goal_y = 0.0;
+          goal_w = 0.5 * 3.1415;
+      }
+*/	
+			
+			goal_x = 1.5;
+			goal_y = 1;
+			goal_w = 0.5*3.1415;
+			loops++;
+			
+			
+      //END CALCULATIONS
 		
-		if (curr_y > 1 && curr_y < 2){
-			set_bot_x = curr_x;
-			set_bot_w = curr_w;
-			count = 1;
-		}
 
-	}
 
-	if ((curr_y > 11 && curr_y < 12) && (count == 1)){
-		set_top_x = curr_x;
-		set_top_w = curr_w;
-		goal_x = set_top_x + 0.75;
-		goal_y = 11;
-		goal_w = set_top_w + pie;
-		count = 2;
-	}
 
-	if ((curr_y < 11 && curr_y > 10) && (count == 2)){
-		set_top_x = curr_x;
-		set_top_w = curr_w;
-		goal_x = set_bot_x + 0.75;
-		goal_y = 1;
-		goal_w = set_bot_w + pie;
-		count = 3;
-	}
-
-	if ((curr_y < 1 && curr_y > 0) && (count == 3)){
-		set_bot_x = curr_x;
-		set_bot_w = curr_w;
-		goal_x = set_bot_x + 0.75;
-		goal_y = 1;
-		goal_w = set_bot_w + pie;
-		count = 4;
-	}
-		
-	if ((curr_y < 1 && curr_y > 0) && (count == 4)){
-		set_bot_x = curr_x;
-		set_bot_w = curr_w;
-		goal_x = set_top_x + 0.75;
-		goal_y = 11;
-		goal_w = set_top_w + pie;
-		count = 1;
-	}
- ROS_INFO("Fuck alles");
+	  ROS_INFO("Sending goal");
       move_base_msgs::MoveBaseGoal goal;
 
       //we'll send a goal to the robot to move 1 meter forward
@@ -115,6 +78,7 @@ while(true){
       goal.target_pose.pose.position.x = goal_x;
       goal.target_pose.pose.position.y = goal_y;
       goal.target_pose.pose.orientation.w = goal_w;
+      goal.target_pose.pose.orientation.z = goal_w;
 
       ROS_INFO("Sending goal");
       ac.sendGoal(goal);
@@ -129,6 +93,4 @@ while(true){
 	  //loop_rate.sleep();
       
   }
-}
-
 }
